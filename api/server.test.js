@@ -49,13 +49,26 @@ describe("login", () => {
     })
 })
 
-describe("jokes request", () => {
+describe("Get request", () => {
     it("returns 500 if no session is found", async () => {
         const res = await request(server).get("/api/jokes");
         expect(res.statusCode).toBe(500);
     });
-    it("returns a JSON object", async () => {
-        const res = await request(server).get("/api/jokes");
-        expect(res.type).toBe("text/html");
-    });
+    it('Json type', async () => {
+		const newUser = { username: 'fady', password: 'gouda' };
+
+		await request(server).post('/api/auth/register').send(newUser)
+			.then(async () => {
+				await request(server)
+					.post('/api/auth/login')
+					.send(newUser)
+					.then(res => {
+                        console.log(res.body)
+						const token = res.body.token;
+                        console.log(token)
+						return request(server).get('/api/jokes').set('Authorization', token)
+							expect('Content-Type', /json/);
+					});
+			});
+	});
 });
